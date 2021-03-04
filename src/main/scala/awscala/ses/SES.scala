@@ -22,11 +22,19 @@ trait SES extends aws.AmazonSimpleEmailService {
     this
   }
 
-  def sendEmail(toAddresses: List[String], subject: String, body: String, sender: String, ccAddresses: List[String] = List(), bccAddresses: List[String] = List()): Either[String, SESSendEmailResult] = {
-    val content = new Content
-    content.setData(body)
-    content.setCharset("UTF-8")
-    val bodyObj = new Body(content)
+  def sendEmail(toAddresses: List[String], subject: String, bodyText: String, bodyHtml: String, sender: String, ccAddresses: List[String] = List(), bccAddresses: List[String] = List()): Either[String, SESSendEmailResult] = {
+    val contentText = new Content
+    contentText.setData(bodyText)
+    contentText.setCharset("UTF-8")
+
+    val contentHtml = new Content
+    contentHtml.setData(bodyHtml)
+    contentHtml.setCharset("UTF-8")
+
+    val bodyObj = new Body()
+    bodyObj.setText(contentText)
+    bodyObj.setHtml(contentHtml)
+
     val subjectObj = new Content(subject)
     val messageObj = new Message(subjectObj, bodyObj)
     val toAddressesObj = new util.ArrayList[String](toAddresses.asJava)
